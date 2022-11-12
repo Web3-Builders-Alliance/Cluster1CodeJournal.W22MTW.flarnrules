@@ -1,0 +1,16 @@
+Every source file in rust is called a crate.
+So - name.rs is a crate
+
+There are three crates that we have spent a lot of time discussing:
+==========
+contract.rs <--- this is where the logic gets executed
+msg.rs <---
+state.rs <--- here's where you store the state on the blockchain. You create structs here.
+==========
+
+In this code journal I intend to review each line of code in the state.rs crate for a template CosmWasm contract.
+
+This contract is located
+
+
+
