@@ -1,0 +1,58 @@
+In this second code journal, I will be exploring the contract for HuahuaInu, a new token on Chihuahua Chain
+
+The entire repo can be found here: https://github.com/HuaHuaInu/HuahuaInu-Contracts
+
+The src folder contains the following folders:
+Reward
+Staking
+Swap
+
+I will look at the swap folder, which as the following crates:
+
+test.rs
+contract.rs
+error.rs
+lib.rs
+msg.rs
+state.rs
+
+==
+
+Unlike the previous contract that I reviewed, this contract included a state.rs crate, so I will look at that now.
+
+state.rs contains 28 lines of code.
+the state crate defines the data structures that determine the state of the contract on chain
+
+==
+
+use schemars::JsonSchema;                                                       1  | generates a JSON schema for the types
+use serde::{Deserialize, Serialize};                                            2  | serde is a framework for serializing and deserialzing rust data structures efficiently and generically
+                                                                                3  
+use cosmwasm_std::{Addr, Decimal, Uint128};                                     4  | cosmwasm_std is from a standard cosmwasm codebase
+use cw20::Denom;                                                                5  | cw20 is a standard cosmwasm token configuration
+use cw_storage_plus::Item;                                                      6  | cw_storage_plus is from a standard cosmwasm codebase
+                                                                                7
+pub const LP_TOKEN: Item<Addr> = Item::new("lp_token");                         8  | declares constant LP_TOKEN
+                                                                                9
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]          10 | 
+pub struct Token {                                                              11 | declares the struct token
+    pub reserve: Uint128,                                                       12 | data field named reserve with type Uint128
+    pub denom: Denom,                                                           13 | data field named denom with type Denom
+}                                                                               14 |
+                                                                                15
+pub const TOKEN1: Item<Token> = Item::new("token1");                            16 | declares constant TOKEN1
+pub const TOKEN2: Item<Token> = Item::new("token2");                            17 | declares constant TOKEN2
+                                                                                18
+pub const OWNER: Item<Option<Addr>> = Item::new("owner");                       19 | declares the constant OWNER
+                                                                                20
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]      21 |
+pub struct Fees {                                                               22 | declares the struct Fees
+    pub protocol_fee_recipient: Addr,                                           23 | data field named protocol_fee_recipient with type Addr
+    pub protocol_fee_percent: Decimal,                                          24 | data field named protocol_fee_percent with type Decimal
+    pub lp_fee_percent: Decimal,                                                25 | data field named lp_fee_percent with type Decimal
+}                                                                               26 |
+                                                                                27
+pub const FEES: Item<Fees> = Item::new("fees");                                 28 | declares the constant FEES
+
+=====
+
