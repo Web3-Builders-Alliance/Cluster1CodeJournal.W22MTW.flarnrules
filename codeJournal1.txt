@@ -4,13 +4,56 @@ So - name.rs is a crate
 There are three crates that we have spent a lot of time discussing:
 ==========
 contract.rs <--- this is where the logic gets executed
-msg.rs <---
-state.rs <--- here's where you store the state on the blockchain. You create structs here.
+msg.rs <--- this is one of the places where you declare a lot of the important data structures you will use in the rest of your smart contract
+state.rs <--- here's where you store the state of the contract on the blockchain. You create structs here.
 ==========
 
-In this code journal I intend to review each line of code in the state.rs crate for a template CosmWasm contract.
+For this first code journal I will be taking a look at msg.rs for the following contract:
+StargazeMultiSnapshot, code located here:
 
-This contract is located
+https://github.com/Deploydon/StargazeMultiSnapshot.git
 
+I found this work in process contract on the Stargaze discord server. The author has not yet successfully deployed this contract.
 
+==
+
+The crate msg.rs for the StargazeMultiSnapshot smart contract is 33 lines.
+
+====
+                                                
+use cosmwasm_schema::cw_serde;              1|
+use schemars::JsonSchema;                   2|- This section declares the things that are used in msg.rs 
+use serde::{Deserialize, Serialize};        3|
+                                            4
+#[cw_serde]                                 5|
+pub struct InstantiateMsg {}                6|- This section declares the InstantiateMsg struct, this struct only gets used once.
+                                            7
+#[cw_serde]                                 8|
+pub enum ExecuteMsg {}                      9|- This secton declares the ExecuteMsg enum. Enums are different from structs.   
+                                            10
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema)]
+#[serde(rename_all = "snake_case")]         12||
+pub enum QueryMsg {                         13||- This whole section declares the QueryMsg enum.
+    CollectionOwnersRange {                 14||
+        collection: String,                 15||-- This section defines the parameters for CollectionOwnersRange
+        start: i32,                         16||
+        end: i32,                           17||
+    },                                      18||
+    AllCollectionOwners {                   19||-- This section defines the parameters for AllCollectionOwners
+        collection: String,                 20||
+        iters: Option<u32>,                 21||
+        start_after: Option<String>,        22||
+        limit: Option<u32>,                 23||
+    },                                      24||
+}                                           25||
+                                            26
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema)]
+pub struct OwnerInfo {                      28|||- This section declares the OwnerInfo struct.
+    // The token id for the NFT             29|||-- The OwnerInfo struct consists of id and owner
+    pub id: String,                         30|||-- In this smart contract, the id is the token id for the NFT
+    // The owner of the token, as a string  31|||-- and owner is the owner, presumably the wallet address for the owner diplayed as a string.
+    pub owner: String,                      32|||
+}                                           33|||
+
+====
 
