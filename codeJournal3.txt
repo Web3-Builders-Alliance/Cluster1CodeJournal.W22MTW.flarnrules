@@ -1,0 +1,74 @@
+In this third code journal, I will continue to explore the contract for HuahuaInu, a new token on Chihuahua Chain that launched and performed a rugpull on November 13, 2022.
+
+The entire repo could can be found here: https://github.com/HuaHuaInu/HuahuaInu-Contracts
+
+After I completed my second code journal, I went back to the repo on github, and found "404 error not found" web pages for the entire HuaHuaInu organization.
+
+I would like to continue reviewing this code base, and hopefully with the skills that I learn during the course of this 10 week program
+I can come back to this contract and identify any issues with the code that make it malicious.
+
+In the WBA discord chat, user BHIKTOR explained that the source code on the repo may not even be the actual version used, which makes sense.
+Presumably, the on chain contract could be a totally different contract than the github contract.
+
+=
+
+Anyways, lets move on.
+
+=
+
+The src folder of the repo contains the following folders:
+Reward
+Staking
+Swap <--- code journal 2 analyzed the state.rs crate from this folder
+
+I will look at the staking folder, which has the following crates:
+
+contract.rs
+error.rs
+hooks.rs
+lib.rs
+msg.rs
+state.rs <--- I will look at the code from this crate.
+tests.rs
+
+The state.rs crate has 23 lines of code.
+
+==
+                                                                                - a lot more imported elements in the staking contract
+                                                                                - these look quite different from the swap contract
+use cosmwasm_schema::cw_serde;                                              1 | - imports cosmwasm_schema
+use cosmwasm_std::{Addr, Uint128};                                          2 | - imports cosmwasm_std
+use cw_controllers::Claims;                                                 3 | - imports cw_controllers 
+use cw_controllers::Hooks;                                                  4 | - i know that webhooks connect to an application
+use cw_storage_plus::{Item, SnapshotItem, SnapshotMap, Strategy};           5 | - imports cw_storage_plus
+use cw_utils::Duration;                                                     6 | - imports cw_utils - utilities
+                                                                            7 
+#[cw_serde]                                                                 8 | - this is used to normalize the code, I've also seen normalization to snake_case              
+pub struct Config {                                                         9 | - this declares the struct "Config"
+    pub owner: Option<Addr>,                                                10| - owner data with an option for address type
+    pub manager: Option<Addr>,                                              11| - manager data with an option for address type
+    pub token_address: Addr,                                                12| - token_address with Addr type
+    pub unstaking_duration: Option<Duration>,                               13| - unstaking_duration data with an option for duration type
+}                                                                           14|
+                                                                            15
+pub const CONFIG: Item<Config> = Item::new("config");                       16| - declares a constant CONFIG that stores the Config struct
+                                                                                - stores as type item that stores Config
+                                                                                - all caps is used because this is not something that will change
+                                                                                - 
+                                                                            17    
+pub const STAKED_BALANCES: SnapshotMap<&Addr, Uint128> = SnapshotMap::new(  18| - declare a constant STAKED_BALANCES
+"staked_balances",                                                          19|
+    "staked_balance__checkpoints",                                          20| - staked_balance__checkpoints (current staked balance)
+    "staked_balance__changelog",                                            21| - staked_balance__changelog (changes to staked balance)
+    Strategy::EveryBlock,                                                   22| - checks every single block?
+);                                                                          23|
+
+======
+
+I am still in a state where I'm sort of... reading a foreign language at this point.
+Lessons learned:
+
+Exposure to unfamiliar language.
+Exposure to github workflow.
+The state.rs file seemingly imports a bunch of dependencies.
+I need to go back through the two prerequisites now that I've been exposed to this code.
